@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <title>Tworzenie kursów</title>
+    <link href="/css/main.css" rel="stylesheet" />
+    <link href="/css/form.css" rel="stylesheet" />
+</head>
+<body>
+    <section>
+        <div class="form-container">
+            <h1>Tworzenie kursu</h1>
+            <script>
+         document.addEventListener("DOMContentLoaded",() => {
+            	const form = document.getElementById("form");
+            	const arr = window.location.pathname.split("/");
+            	const projectName = arr[2];
+            	const url = 	`/projects/${projectName}/new/lesson`;
+            	form.action = url;
+            	
+            });
+            </script>
+            <form action="" enctype="multipart/form-data"  id="form" method="post">
+                <input type="text" name="name" placeholder="Nazwa lekcji" />
+                <textarea name="description" placeholder="Opis lekcji"></textarea>
+                <input name="data" type="date">
+                <input type="file" name="video">
+                <input type="submit" value="Dodaj lekcję" />
+            </form>
+        </div>
+    </section>
+</body>
+</html>

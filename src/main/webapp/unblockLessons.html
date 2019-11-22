@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <title>Kursy</title>
+    <link href="/css/main.css" rel="stylesheet" />
+    <link href="/css/courses.css" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <nav>
+                <ul>
+                     <li><a href="/projects/courses">Kursy</a></li>
+                    <li><a href="/">Konto</a></li>
+                    <li><a href="/logout">Wyloguj</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+           
+        </main>
+    </div>
+    <script> 
+    document.addEventListener("DOMContentLoaded",()=>{
+    	let main = document.getElementsByTagName('main')[0];
+    	
+    	main.onclick = async (event)=>{
+    		console.log(event.target.id);
+    	if (event.target.id.includes("&&")){
+    	const link = event.target.id.replace("&&","");
+    	console.log(link);
+    	main.innerHTML = "";
+    	const res = await fetch(`/projects/${link}`);
+    	const obj = await res.json();
+    	console.log(obj);
+    	obj.lessons.forEach((entry)=>{
+    		let div = document.createElement("div");
+    		div.id = `/projects/${link}/${entry}/unlock`;
+    		console.log(div.id);
+    		console.log(entry);
+    		div.innerHTML = entry;
+    		main.appendChild(div);
+    	});
+    	}
+    	if (event.target.id.includes("unlock")){
+    		window.location.replace(event.target.id);
+    	}
+    	};
+    	
+    	(async()=>{
+    		const response = await fetch("/projects/");
+    		const json = await response.json();
+    		json.projects.forEach((project)=>{
+    			let div = document.createElement("div");
+    			div.id = "&&"+project.name;
+    			div.innerHTML = project.name;
+    			main.appendChild(div);
+    		});
+    	})();
+    });
+    </script>
+
+</body>
+</html>

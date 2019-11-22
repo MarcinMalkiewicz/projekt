@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <title>Kursy</title>
+    <link href="/css/main.css" rel="stylesheet" />
+    <link href="/css/courses.css" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <nav>
+                <ul>
+                     <li><a href="/projects/courses">Kursy</a></li>
+                    <li><a href="/">Konto</a></li>
+                    <li><a href="/logout">Wyloguj</a></li>>
+                </ul>
+            </nav>
+        </header>
+        <main>
+           <script>
+           document.addEventListener("DOMContentLoaded",async()=>{
+        	  (async ()=>{
+        		     const linkFetch = window.location.pathname.replace("html","");
+        			 const linkVideo = window.location.pathname.replace("html","video");
+        			 const response = await fetch(linkFetch);
+        			 const json = await response.json();
+        			let title =  document.createElement("h2");
+        			title.innerHTML = json.name;
+        			let description = document.createElement("p");
+        			description.innnerHTML = json.description;
+        			let video = document.createElement("video");
+        			video.src = linkVideo;
+        			video.controls = "true";
+        			let div = document.createElement('div');
+        			div.appendChild(title);
+        			div.appendChild(description);
+        			div.appendChild(video);
+        			document.getElementsByTagName("main")[0].appendChild(div);
+        	  })(); 
+           });
+           </script>
+        </main>
+    </div>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1200,
+        });
+    </script>
+</body>
+</html>

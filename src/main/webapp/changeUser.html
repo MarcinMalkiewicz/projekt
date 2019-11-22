@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <title>Rejestracja</title>
+    <link href="./css/main.css" rel="stylesheet" />
+    <link href="./css/form.css" rel="stylesheet" />
+</head>
+<body>
+    <section>
+        <div class="form-container">
+            <h1>Rejestracja</h1>
+            <form action="/users/new" method="post" enctype="multipart/form-data">
+                <input type="email" name="email" placeholder="Adres email" />
+                <input type="password" name="password" placeholder="Hasło" />
+                <label for="accountType">Wybierz typ konta:</label>
+                <select name="type" id="accountType">
+                    <option value="USER">USER</option>
+                    <option value="TUTOR">TUTOR</option>
+                </select>
+                <input type="submit" value="Zarejestruj się" />
+            </form>
+        </div>
+    </section>
+</body>
+</html>

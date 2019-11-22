@@ -1,0 +1,51 @@
+body {
+    background-image: url('../images/bgForm.jpg'); }
+
+section {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+
+.admin-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 500px;
+    background: #F7F7F7; }
+
+.admin-panel h1 {
+    background: #43D1AF;
+    margin: 0;
+    padding: 20px 50px;
+    font-size: 140%;
+    font-weight: 300;
+    text-align: center;
+    color: #fff; }
+
+.admin-panel a {
+    padding: 20px 10px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #000;
+    outline: none;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    width: 100%;
+    background: #fff;
+    margin-top: 10px;
+    margin-bottom: 4%;
+    border: 1px solid #ccc;
+    padding: 3%;
+    color: #555;
+    text-align: center; }
+
+.admin-panel a:hover {
+    box-shadow: 0 0 5px #43D1AF;
+    padding: 3%;
+    border: 1px solid #43D1AF; }
+
+.admin-panel:last-child{
+    padding-bottom: 20px; }
