@@ -3,7 +3,8 @@ package com.marcin.entities;
 
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
+
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
-import org.springframework.web.multipart.MultipartFile;
+
 
 
 
@@ -44,6 +45,18 @@ public class Lesson {
 	public Lesson() {
 		super();
 	}
+	@Column(name="yt_link")
+	private String yt_link;
+
+
+public String getYtLink() {
+		return yt_link;
+	}
+
+
+	public void setYtLink(String yt_link) {
+		this.yt_link = yt_link;
+	}
 
 
 public Lesson(String name, String projectname, String description, byte[] video, String data,String isLocked) {
@@ -54,8 +67,17 @@ public Lesson(String name, String projectname, String description, byte[] video,
 	this.video = video;
 	this.unlock_date = Date.valueOf(data);
 	this.is_locked = isLocked;
+	
 	}
-
+public Lesson(String name, String projectname, String description,String yt_link,String data,String isLocked) {
+	super();
+	this.name = name;
+	this.projectname = projectname;
+	this.description = description;
+	this.is_locked = isLocked;
+	this.unlock_date = Date.valueOf(data);
+	this.yt_link = yt_link;
+	}
 
 	public void setId(Long id) {
 		this.id = id;

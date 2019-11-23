@@ -15,12 +15,15 @@ document.addEventListener("DOMContentLoaded",()=>{
 	    	let link = document.createElement('a');
 	    	let img  = document.createElement('img');
 	    	let description = document.createElement("p");
+
             const req = await fetch(`/projects/${json.name}/${lesson}`);
             const res = await req.json();
             console.log(res);
             link.href= `/projects/${json.name}/${res.name}/html`;
             title.innerHTML = res.name;
             description.innerHTML = res.description;
+        	
+        	link.appendChild(button);
 	    	div.appendChild(title);
 	    	link.appendChild(div);
 	    	main.appendChild(link);

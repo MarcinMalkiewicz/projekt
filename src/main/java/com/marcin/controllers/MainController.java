@@ -2,6 +2,8 @@ package com.marcin.controllers;
 
 import javax.servlet.http.HttpSession;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,8 @@ import org.jsoup.safety.Whitelist;
 public class MainController {
 @Autowired
 private UsersRepository users;
+@Autowired
+private ObjectMapper mapper;
 
 @RequestMapping(value = "/")
 public String index(HttpSession session) {
@@ -51,9 +55,7 @@ public String middle() {
 @PostMapping("/userLogin")
 public RedirectView login(Login form,HttpSession session) {
 	 String password = DigestUtils.sha256Hex(form.getPassword());
-	System.out.print(password);
 	 String email = Jsoup.clean(form.getEmail(),Whitelist.none());
-	 System.out.print(email);
 	User user = users.findByEmailAndPassword(email, password);
 	if (user==null || user.getBlocked().equals("BLOCKED")) {
 	session.setAttribute("logged", "NOTLOGGED");
@@ -64,6 +66,11 @@ public RedirectView login(Login form,HttpSession session) {
 	session.setAttribute("user", email);
 	}
 	return new RedirectView("/",true);
+}
+
+@GetMapping("/fromYt/{projectName}")
+public String yt() {
+	return "newLessonFromYt";
 }
 
 @GetMapping("/isLogged")
@@ -82,5 +89,17 @@ public String forbidden(){
 	return "forbidden";
 }
 
-
+	@GetMapping("/currentUser")
+	public @ResponseBody ObjectNode current(HttpSession session) {
+		
+		ObjectNode node = mapper.createObjectNode();
+		if (session.getAttribute("user") != null) {
+			User user = users.findByEmail(session.getAttribute("user").toString());
+			if (user != null) {
+				node.put("type", user.getType().toString());
+			}
+			else node.put("Error","you are not logged");
+		}
+		return node;
+	}
 }

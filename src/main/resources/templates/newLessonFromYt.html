@@ -13,25 +13,17 @@
                 <input type="text" name="name" placeholder="Nazwa lekcji" />
                 <textarea name="description" placeholder="Opis lekcji"></textarea>
                 <input id="data" name="data"  type="date"/>
-                <input type='file' name='video' />
+                <input type="text" name="ytLink">
                 <input type="submit" value="Dodaj lekcję" />     
             </form>
-         <button type="button" id="fromYT">Z YT</button>
-             
+           
                 <script>
                 document.addEventListener("DOMContentLoaded",() => {
                 	const form = document.getElementById("form");
                 	const arr = window.location.pathname.split("/");
                 	const projectName = arr[2];
-                	const url = 	`/projects/${projectName}/new/lesson`;
+                	const url = `/projects/${projectName}/new/lessonFromYt`;
                 	form.action = url;
-                	
-                	  document.getElementById("fromYT").onclick = ()=>{
-                      	console.log(document.getElementById("data").value);
-                     window.location.replace(`/fromYt/${projectName}`);
-                      }
-                      
-             
                 });
                 
               

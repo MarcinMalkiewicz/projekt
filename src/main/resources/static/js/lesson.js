@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 		const h4 = document.createElement('h4')
 		const h3 = document.createElement('h3')
 		const video = document.createElement('video');
-		
+		h2.setAttribute('id','delete');
 		div.setAttribute('class','course item');
 		div1.setAttribute('class','course-miniature');
 		div2.setAttribute('class','course-description');
@@ -28,6 +28,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 		div.appendChild(div1);
 		div.appendChild(div2);
 		
+		
+    	button.innerText = "usuń";
 		h3.innerHTML= lesson.projectname;
 		h4.innerHTML= lesson.description;
 		
@@ -40,4 +42,13 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 		
 	})();
+		
+		document.onclick = (event)=>{
+			console.log('clicked');
+			if(event.target.id=="delete"){
+				
+    		window.location.replace(`/projects/delete/${lesson.project}/${lesson.name}`);
+			}
+    	}
+});
 });

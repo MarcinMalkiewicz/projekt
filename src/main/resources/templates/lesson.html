@@ -7,6 +7,11 @@
     <link href="/css/main.css" rel="stylesheet" />
     <link href="/css/courses.css" rel="stylesheet" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+    *{
+    color:white;
+    }
+    </style>
 </head>
 <body>
     <div class="wrapper">
@@ -23,22 +28,40 @@
            <script>
            document.addEventListener("DOMContentLoaded",async()=>{
         	  (async ()=>{
-        		     const linkFetch = window.location.pathname.replace("html","");
-        			 const linkVideo = window.location.pathname.replace("html","video");
+        		     const linkFetch = window.location.pathname.replace("html","");     		 
         			 const response = await fetch(linkFetch);
+        			 let linkVideo= "";
         			 const json = await response.json();
+        			 if (json.ytLink!="NULL" ){
+        				 linkVideo = json.ytLink;
+        			 }
+        			 else {
+        				  linkVideo = window.location.pathname.replace("html","video");
+        			 }
         			let title =  document.createElement("h2");
         			title.innerHTML = json.name;
         			let description = document.createElement("p");
         			description.innnerHTML = json.description;
-        			let video = document.createElement("video");
-        			video.src = linkVideo;
-        			video.controls = "true";
+        			let iframe = "";
+        			if(json.ytLink!=null){
+        				iframe=document.createElement('video');
+        				iframe.src = linkVideo;
+        				iframe.controls = "controls";
+        				iframe.autoplay = "autoplay";
+        			}
+        			else {
+        				iframe = document.createElement("video");
+            			iframe.src = linkVideo;
+        			}
+        			
+        		
         			let div = document.createElement('div');
         			div.appendChild(title);
         			div.appendChild(description);
-        			div.appendChild(video);
-        			document.getElementsByTagName("main")[0].appendChild(div);
+        			if(json.ytLink!=null){
+        			div.appendChild(iframe);
+        			}
+	document.getElementsByTagName("main")[0].appendChild(div);
         	  })(); 
            });
            </script>

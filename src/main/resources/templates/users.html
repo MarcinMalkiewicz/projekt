@@ -8,6 +8,12 @@
     <link href="/css/courses.css" rel="stylesheet" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script type="text/javascript" src="/js/users.js"></script>
+    <style>
+    *{
+    color:white;
+    }
+    
+    </style>
 </head>
 <body>
     <div class="wrapper">
@@ -21,7 +27,10 @@
             </nav>
         </header>
         <main>
-           
+           <form action="/users/block" id="form" method="post" enctype="multipart/form-data">
+           <input id="mail" type="email" name="email">
+           <input type="submit">
+           </form>
         </main>
     </div>
     <script> 

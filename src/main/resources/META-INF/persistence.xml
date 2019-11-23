@@ -1,0 +1,61 @@
+
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+
+             version="2.1">
+
+    <persistence-unit name="simple_samplePersistenceUnit">
+
+        <properties>
+
+            <property name="javax.persistence.jdbc.url"
+
+                      value="jdbc:mysql://localhost:3306/database?serverTimezone=UTC"/>
+
+            <property name="javax.persistence.jdbc.user" value="root"/>
+
+            <property name="javax.persistence.jdbc.password" value="coderslab"/>
+
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+
+            <property name="javax.persistence.schema-generation.database.action"
+
+                      value="drop-and-create"/>
+
+            <property name="spring.datasource.testOnBorrow "
+
+                      value="true"/>
+
+            <property name="spring.datasource.timeBetweenEvictionRunsMillis" value="6000"/>
+
+            <property name="spring.datasource.minEvictableIdleTimeMillis" value="3000"/>
+
+            <property name="spring.datasource.validationQuery" value="SELECT 1"/>
+
+            <property name="spring.datasource.max-active"
+
+                      value="15"/>
+
+            <property name="spring.datasource.max-idle" value="10"/>
+
+            <property name="spring.datasource.max-wait" value="8000"/>
+
+
+ <property name="security.basic.enabled" value="f"/>
+
+ <property name="spring.session.store-type" value="jdbc"/>
+
+ <property name="spring.resources.static-locations" value="/js/,/css/"/>
+ <property name="spring.servlet.multipart.max-file-size" value="=1000000KB"/>
+  <property name="spring.servlet.multipart.max-request-size" value="1000000KB"/>
+
+        </properties>
+
+    </persistence-unit>
+
+</persistence>

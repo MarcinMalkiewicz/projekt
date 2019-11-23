@@ -1,24 +1,20 @@
 package com.marcin.controllers;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 
-import com.mysql.cj.exceptions.ExceptionInterceptor;
-import com.mysql.cj.jdbc.Blob;
+
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
+
 
 
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
+
 import javax.servlet.http.HttpSession;
-import javax.sql.rowset.serial.SerialBlob;
+
 import javax.sql.rowset.serial.SerialException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,18 +32,20 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marcin.entities.Lesson;
 import com.marcin.entities.Project;
+import com.marcin.entities.User;
 import com.marcin.formObjects.LessonForm;
+import com.marcin.formObjects.LessonFromYtForm;
 import com.marcin.formObjects.ProjectForm;
 import com.marcin.repositories.LessonsRepository;
 import com.marcin.repositories.ProjectsRepository;
+import com.marcin.repositories.UsersRepository;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.hibernate.Hibernate;
+
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
-import org.slf4j.LoggerFactory;
+
 @Controller
+
 @RequestMapping("/projects")
 public class ProjectController {
 	@Autowired
@@ -55,13 +53,15 @@ public class ProjectController {
 	@Autowired
 	private ProjectsRepository projects;
 	@Autowired
+	private UsersRepository users;
+	@Autowired
 	private ObjectMapper mapper;
 	@GetMapping("/")
 	public @ResponseBody ObjectNode getAll() {
-	ObjectNode node = mapper.createObjectNode();
-	ArrayNode array = mapper.valueToTree(projects.findAll());
-	node.putArray("projects").addAll(array);
-	return node;
+		ObjectNode node = mapper.createObjectNode();
+		ArrayNode array = mapper.valueToTree(projects.findAll());
+		node.putArray("projects").addAll(array);
+		return node;
 	}
 
 	@GetMapping("/courses")
@@ -93,8 +93,8 @@ public class ProjectController {
 	public RedirectView unbLesson(@PathVariable("projectName") String projectName,@PathVariable("lessonName") String lessonName,HttpSession session){
 		Lesson lesson = lessons.findByNameAndProjectname(lessonName, projectName);
 		if(session.getAttribute("logged")=="LOGGED" && lesson!=null) {
-		lesson.setIsLocked("UNLOCKED");
-		lessons.save(lesson);
+			lesson.setIsLocked("UNLOCKED");
+			lessons.save(lesson);
 		}
 		return new RedirectView("/",true);
 	}
@@ -103,27 +103,73 @@ public class ProjectController {
 	public String htmlLesson(){
 		return "lesson";
 	}
+	
+	@GetMapping("/delete/{projectName}")
+	public RedirectView red(@PathVariable("projectName") String projectName){
+		Project project = projects.findByName(projectName);
+		if (project!=null) {
+		List<Lesson> lessonsList = lessons.findByProjectname(projectName);
+		if (lessonsList!=null) {
+		lessonsList.forEach((less)->{
+		lessons.delete(less);
+		});
+		}
+		 projects.delete(project);
+		}	
+		return new RedirectView("/");
+	}
+
+	@GetMapping("/delete/{projectName}/{lessonName}")
+	public RedirectView red(@PathVariable("projectName") String projectName, @PathVariable("lessonName") String lessonName){
+		Lesson less = lessons.findByNameAndProjectname(lessonName, projectName);
+		if (less!=null) {
+			lessons.delete(less);
+		}
+		return new RedirectView("/");
+	}
 
 	@PostMapping("/{project}/new/lesson")
 	public RedirectView newLessonPost(@PathVariable("project") String projectName,LessonForm form, HttpSession session)  throws IOException, SerialException, SQLException{
 		if(session.getAttribute("logged")=="LOGGED" && form.getName()!=null
-		&& form.getData()!=null && form.getDescription()!=null && form.getVideo()!=null) {
-		Lesson lesson = new Lesson(
-				form.getName(),
-				projectName,
-				form.getDescription(),
-				form.getVideo().getBytes(),
-				form.getData(),
-				"UNLOCKED"
-				);
-		lessons.save(lesson);
-		}
+				&& form.getData()!=null && form.getData() !="" && form.getDescription()!=null ) {
+			 
+			Lesson lesson = new Lesson(
+					form.getName(),
+					projectName,
+					form.getDescription(),
+					form.getVideo().getBytes(),
+					form.getData(),
+					"LOCKED"		
+			);
+			lessons.save(lesson);
+			}
 		else {
 			return new RedirectView("/projects/",true);
 		}
 		return new RedirectView("/",true);
 	}
 
+	
+	@PostMapping("/{project}/new/lessonFromYt")
+	public RedirectView newLessonPost(@PathVariable("project") String projectName,LessonFromYtForm form, HttpSession session)  throws IOException, SerialException, SQLException{
+		if(session.getAttribute("logged")=="LOGGED" && form.getName()!=null
+				&& form.getData()!=null && form.getData() !="" && form.getDescription()!=null ) {
+	
+		     Lesson lesson = new Lesson(
+		    		 form.getName(),
+		    		 projectName,
+		    		 form.getDescription(),
+		    		 form.getYtLink(),
+		    		 form.getData(),
+		    		 "LOCKED"
+			);
+			lessons.save(lesson);
+			}
+		else {
+			return new RedirectView("/projects/",true);
+		}
+		return new RedirectView("/",true);
+	}
 	@GetMapping("/{projectName}")
 	public @ResponseBody ObjectNode getProject(@PathVariable("projectName") String projectName) {
 		Project project = projects.findByName(projectName);
@@ -144,8 +190,8 @@ public class ProjectController {
 	@GetMapping(value="/{projectName}/{lessonName}/video",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public @ResponseBody byte[] blobuj(@PathVariable("projectName") String projectName,@PathVariable("lessonName") String lessonName) throws IOException {
 		Lesson less = lessons.findByNameAndProjectname(lessonName,projectName);
-		if(less!=null)
-	 return less.getVideo();
+		if(less!=null && less.getVideo()!=null)
+			return less.getVideo();
 		else return null;
 	}
 
@@ -153,25 +199,31 @@ public class ProjectController {
 	public @ResponseBody ObjectNode getLesson(@PathVariable String projectName, @PathVariable String lessonName,HttpSession session) {
 		ObjectNode node = mapper.createObjectNode();
 		if(session.getAttribute("logged").equals("LOGGED")) {
-		Lesson lesson = lessons.findByNameAndProjectname(lessonName, projectName);
-		if (lesson == null) {
-			node.put("Error","No such entry in database");
-			return node;
-		}
-		if(lesson.getIsLocked().equals("UNLOCKED") || lesson!=null && lesson.getUnlock_date()!=null && lesson.getDescription()!=null && lesson.getIs_locked()!=null && lesson.getName()!=null && lesson.getUnlock_date().compareTo(new java.util.Date())<=0) {
-		node.put("name", lesson.getName());
-		node.put("description",lesson.getDescription());
-		node.put("project",lesson.getProjectname());
-		node.put("isLocked",lesson.getIsLocked());
-		node.put("unlockDate",lesson.getUnlock_date().toString());
-		}
-		else node.put("Error","This lesson is not avalaible for you");
+			Lesson lesson = lessons.findByNameAndProjectname(lessonName, projectName);
+			if (lesson == null) {
+				node.put("Error","No such entry in database");
+				return node;
+			}
+			if(lesson.getIsLocked().equals("UNLOCKED") || lesson!=null && lesson.getUnlock_date()!=null && lesson.getDescription()!=null && lesson.getIs_locked()!=null && lesson.getName()!=null && lesson.getUnlock_date().compareTo(new java.util.Date())<=0) {
+				node.put("name", lesson.getName());
+				node.put("description",lesson.getDescription());
+				node.put("project",lesson.getProjectname());
+				node.put("isLocked",lesson.getIsLocked());
+				node.put("unlockDate",lesson.getUnlock_date().toString());
+				if (lesson.getYtLink()==null) {
+					node.put("ytLink","NULL");
+				}
+				else {
+					node.put("ytLink",lesson.getYtLink());
+				}
+			}
+			else node.put("Error","This lesson is not avalaible for you");
 		}
 		else {
 			node.put("Error","You are not logged");
 		}
 		return node;
-		}
+	}
 
 	@GetMapping("/new/project")
 	public String newProjectGet(HttpSession session) {
@@ -179,22 +231,26 @@ public class ProjectController {
 			return "newProject";
 
 		else
-		return "forbidden";
-		}
+			return "forbidden";
+	}
 
 	@PostMapping("/new/project")
 	public RedirectView newProjectPost(HttpSession session,ProjectForm form) {
-		if (session.getAttribute("logged")=="LOGGED") {
-			String owner = session.getAttribute("user")!=null ? session.getAttribute("user").toString() : "Owner";
-			String name= Jsoup.clean(form.getName(),Whitelist.none());
-			String desc = Jsoup.clean(form.getDescription(),Whitelist.none());
-			if (name == null || desc == null)
-				return new RedirectView("/");
-		    Project project = new Project(name,owner,desc);
-		    projects.save(project);
-			return new RedirectView("/projects/new/project");
+		if(session.getAttribute("logged")!= null && session.getAttribute("user")!= null) {
+			User user = users.findByEmail(session.getAttribute("user").toString());
+			if (session.getAttribute("logged").toString().equals("LOGGED") && user!=null && user.getType().toString().equals("TUTOR") || user.getType().toString().equals("ADMIN")) {
+				String owner = session.getAttribute("user")!=null ? session.getAttribute("user").toString() : "Owner";
+				String name= Jsoup.clean(form.getName(),Whitelist.none());
+				String desc = Jsoup.clean(form.getDescription(),Whitelist.none());
+				if (name == null || desc == null)
+					return new RedirectView("/");
+				Project project = new Project(name,owner,desc);
+				projects.save(project);
+				return new RedirectView("/projects/new/project");
+			}
 		}
 		else return new RedirectView("/forbidden",true);
+		return new RedirectView("/forbidden",true);
 	}
 
 

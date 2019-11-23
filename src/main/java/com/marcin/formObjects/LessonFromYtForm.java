@@ -1,25 +1,20 @@
 package com.marcin.formObjects;
 
-import org.springframework.web.multipart.MultipartFile;
 
-public class LessonForm {
+public class LessonFromYtForm {
 
 
 	private String name;
 	private String description;
 	private String data;
-	private MultipartFile video;
+	private String ytLink;
 	
-
-	
-
-	
-	public LessonForm(String name, String description, String data, MultipartFile video) {
+	public LessonFromYtForm(String name, String description, String data, String ytLink) {
 		super();
 		this.name = name;
 		this.description = description;
 		this.data = data;
-		this.video = video;
+		this.ytLink = ytLink;
 	}
 
 
@@ -35,13 +30,11 @@ public class LessonForm {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public MultipartFile getVideo() {
-		if (video!=null)
-		return video;
-		else return null;
+	public String getYtLink() {
+		return this.ytLink;
 	}
-	public void setVideo(MultipartFile video) {
-		this.video = video;
+	public void setYtLink(String ytLink) {
+		this.ytLink = ytLink;
 	}
 	public String getData() {
 		return data;

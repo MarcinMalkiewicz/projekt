@@ -9,14 +9,28 @@
 </head>
 <body>
     <section>
-        <div class="admin-panel">
-            <h1>Panel administracyjny</h1>
-            <a href="/users/html/block">Blokowanie użytkowników</a>
-            <a href="/projects/lesson/unblock">Odblokowanie lekcji</a>
-            <a href="/projects/courses">Projekty</a>
-            <a href="/projects/new/project">Nowy projekt</a>
-            <a href="/newLessonMiddle">Nowa lekcja</a>
-              <a href="/logout">Wyloguj</a>
+        <div class="admin-panel" id="admin-panel">
+            <script>
+                document.addEventListener("DOMContentLoaded",()=>{
+
+                    (async ()=>{
+                        const response = await fetch("/currentUser");
+                        const json = await response.json();
+
+                        switch (json.type){
+                            case "USER" :
+                                document.getElementById('admin-panel').innerHTML+= " <h1>Panel użytkownika</h1><a href='/projects/courses'>Projekty</a>";
+                                break;
+                            case "TUTOR" :
+                                document.getElementById('admin-panel').innerHTML+= "<h1>Panel użytkownika</h1><a href='/projects/courses'>Projekty</a><a href='/projects/new/project'>Nowy projekt</a><a href='/newLessonMiddle'>Nowa lekcja</a>";
+                                break;
+                            case "ADMIN":
+                                document.getElementById('admin-panel').innerHTML+= "<h1>Panel użytkownika</h1><a href='/projects/courses'>Projekty</a> <a href='/projects/new/project'>Nowy projekt</a><a href='/newLessonMiddle'>Nowa lekcja</a> <a href='/users/html/block'>Blokowanie użytkowników</a><a href='/projects/lesson/unblock'>Odblokowanie lekcji</a>";
+                                break;
+                        }
+                    })();
+                });
+            </script>
         </div>
     </section>
 </body>
